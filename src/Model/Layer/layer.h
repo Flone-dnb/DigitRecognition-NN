@@ -26,6 +26,12 @@ public:
         void connectToPrevLayer (Layer* pLayer);
 
 
+
+    // SET functions.
+
+        void setBiasToAll        (float fBias);
+
+
     // GET functions.
 
         const std::vector<Neuron*>& getNeurons () const;

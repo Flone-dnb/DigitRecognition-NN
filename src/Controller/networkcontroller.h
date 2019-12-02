@@ -20,7 +20,16 @@ public:
     NetworkController  (MainWindow* pMainWindow);
 
 
-    void setupNeuralNetwork(const std::vector<unsigned int>& vArchitecture);
+    // Setup
+
+        void setupNeuralNetwork (const std::vector<unsigned int>& vArchitecture);
+        void setupBias          (float fBias);
+        void setTrainingSpeed   (float fSpeed);
+
+
+    // Samples
+
+        void showTrainingSample (size_t i);
 
 
     ~NetworkController ();

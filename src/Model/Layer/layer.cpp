@@ -47,6 +47,14 @@ void Layer::connectToPrevLayer(Layer *pLayer)
     }
 }
 
+void Layer::setBiasToAll(float fBias)
+{
+    for (size_t i = 0;   i < vNeurons .size();   i++)
+    {
+        vNeurons[i] ->setBias(fBias);
+    }
+}
+
 const std::vector<Neuron *> &Layer::getNeurons() const
 {
     return vNeurons;

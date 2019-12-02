@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,24 +17,29 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    ../ext/qcustomplot/qcustomplot.cpp \
     ../src/Controller/networkcontroller.cpp \
     ../src/Model/Connection/connection.cpp \
     ../src/Model/Layer/layer.cpp \
     ../src/Model/NeuralNetwork/neuralnetwork.cpp \
     ../src/Model/Neuron/neuron.cpp \
+    ../src/View/TrainImageWidget/trainimagewidget.cpp \
     ../src/main.cpp \
     ../src/View/MainWindow/mainwindow.cpp
 
 HEADERS += \
+    ../ext/qcustomplot/qcustomplot.h \
     ../src/Controller/networkcontroller.h \
     ../src/Model/Connection/connection.h \
     ../src/Model/Layer/layer.h \
     ../src/Model/NeuralNetwork/neuralnetwork.h \
     ../src/Model/Neuron/neuron.h \
-    ../src/View/MainWindow/mainwindow.h
+    ../src/View/MainWindow/mainwindow.h \
+    ../src/View/TrainImageWidget/trainimagewidget.h
 
 FORMS += \
-    ../src/View/MainWindow/mainwindow.ui
+    ../src/View/MainWindow/mainwindow.ui \
+    ../src/View/TrainImageWidget/trainimagewidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

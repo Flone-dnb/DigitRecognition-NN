@@ -17,7 +17,24 @@ NetworkController::NetworkController(MainWindow* pMainWindow)
 
 void NetworkController::setupNeuralNetwork(const std::vector<unsigned int> &vArchitecture)
 {
-    this ->pNeuralNetwork = new NeuralNetwork(vArchitecture, pMainWindow);
+    pNeuralNetwork = new NeuralNetwork(vArchitecture, pMainWindow);
+
+    pNeuralNetwork ->setRandomWeights();
+}
+
+void NetworkController::setupBias(float fBias)
+{
+    pNeuralNetwork ->setBiasForAll(fBias);
+}
+
+void NetworkController::setTrainingSpeed(float fSpeed)
+{
+    pNeuralNetwork ->setTrainingSpeed(fSpeed);
+}
+
+void NetworkController::showTrainingSample(size_t i)
+{
+    pNeuralNetwork ->showTrainingSample(i);
 }
 
 NetworkController::~NetworkController()
