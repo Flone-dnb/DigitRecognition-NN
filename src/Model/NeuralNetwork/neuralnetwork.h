@@ -57,6 +57,7 @@ public:
 
         void startTraining      ();
         void startTesting       ();
+        void answer             (std::vector< std::vector<unsigned char> > vInput);
 
 
     // Save/Load

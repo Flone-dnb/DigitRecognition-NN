@@ -24,9 +24,16 @@ public:
 
     ~TrainImageWidget();
 
+
+    std::vector< std::vector<unsigned char> > drawing;
+    bool bDrawImage;
+    bool bPressed;
+
 protected:
 
     void paintEvent(QPaintEvent *event);
+    void mousePressEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent* event);
 
 private:
 
@@ -34,4 +41,7 @@ private:
 
 
     std::vector< std::vector<unsigned char> > pixels;
+
+
+    QPointF pressPoint;
 };

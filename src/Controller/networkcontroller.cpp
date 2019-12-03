@@ -59,6 +59,11 @@ void NetworkController::startTesting()
     tStart .detach();
 }
 
+void NetworkController::answer(std::vector< std::vector<unsigned char> > vInput)
+{
+    pNeuralNetwork ->answer(vInput);
+}
+
 void NetworkController::saveTraining(std::wstring sPath)
 {
     pNeuralNetwork ->saveTraining(sPath);

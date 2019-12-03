@@ -26,6 +26,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
 
+    ui ->widget_user_input ->bDrawImage = true;
+
+
+
+
 
 
     // Connects 'this-to-this'
@@ -150,6 +155,11 @@ void MainWindow::drawSample(bool bTrainingSample, size_t iSampleNumber, unsigned
 
         ui ->widget_test ->drawSample(pixels);
     }
+}
+
+void MainWindow::answer(int iAnswer)
+{
+    ui ->label_nn_answer ->setText("I think this is number " + QString::number(iAnswer) + ".");
 }
 
 void MainWindow::slotAddTrainingCostValue(double dSampleNumber, double dValue)
@@ -371,4 +381,22 @@ void MainWindow::on_actionOpen_training_triggered()
     }
 
     ui ->pushButton_train ->setEnabled(true);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    pNetworkController ->answer( ui ->widget_user_input ->drawing );
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    for (size_t i = 0; i < ui ->widget_user_input ->drawing .size(); i++)
+    {
+        for (size_t j = 0; j < ui ->widget_user_input ->drawing[i] .size(); j++)
+        {
+            ui ->widget_user_input ->drawing[i][j] = 0;
+            ui ->widget_user_input ->repaint();
+        }
+    }
+
 }

@@ -276,6 +276,58 @@ void NeuralNetwork::startTesting()
     }
 }
 
+void NeuralNetwork::answer(std::vector< std::vector<unsigned char> > vInput)
+{
+    // Convert input to a one-dimensional [0.0 ... 1.0] vector.
+
+    std::vector<float> vTestingSample;
+
+    for (size_t row = 0;   row < vInput .size();   row++)
+    {
+        for (size_t column = 0;   column < vInput[row] .size();   column++)
+        {
+            float fInput = vInput[row][column] / static_cast <float> (UCHAR_MAX);
+
+            vTestingSample .push_back( fInput );
+        }
+    }
+
+
+
+    // Give the input to the neurons.
+
+    vLayers[0] ->setInputForNeurons (vTestingSample);
+
+    for (size_t j = 1;   j < vLayers .size();   j++)
+    {
+        vLayers[j] ->calculateResult();
+    }
+
+
+
+
+    // Get the biggest output.
+
+    std::vector<Neuron*> vOutputNeurons = vLayers .back() ->getNeurons();
+
+    size_t iBiggestOutputIndex = 0;
+
+    for (size_t k = 1;   k < vOutputNeurons .size();   k++)
+    {
+        if ( vOutputNeurons[k] ->getOutputSignal() > vOutputNeurons[iBiggestOutputIndex] ->getOutputSignal() )
+        {
+            iBiggestOutputIndex = k;
+        }
+    }
+
+
+
+
+    // Result.
+
+    pMainWindow ->answer(iBiggestOutputIndex);
+}
+
 void NeuralNetwork::saveTraining(std::wstring sPath)
 {
     std::ofstream file (sPath, std::ios::binary);

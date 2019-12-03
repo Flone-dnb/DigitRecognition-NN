@@ -33,6 +33,7 @@ public:
     void addTestingResult           (double dSampleNumber, double dPercent);
     void showMessageBox             (bool bErrorBox,       std::string sText);
     void drawSample                 (bool bTrainingSample, size_t iSampleNumber, unsigned char iSampleValue, std::vector< std::vector<unsigned char> > pixels);
+    void answer                     (int iAnswer);
 
 
     ~MainWindow();
@@ -73,6 +74,10 @@ private slots:
     void on_actionCreate_new_model_triggered();
 
     void on_actionOpen_training_triggered();
+
+    void on_pushButton_clicked();
+
+    void on_pushButton_3_clicked();
 
 private:
 
