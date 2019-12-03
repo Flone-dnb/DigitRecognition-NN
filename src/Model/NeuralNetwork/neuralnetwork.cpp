@@ -25,6 +25,7 @@ NeuralNetwork::NeuralNetwork(const std::vector<unsigned int>& vArchitecture, Mai
 
 
     loadTrainingSamples();
+    loadTestingSamples();
 
 
 
@@ -85,7 +86,12 @@ void NeuralNetwork::setRandomWeights()
 
 void NeuralNetwork::showTrainingSample(size_t i)
 {
-    pMainWindow ->drawSample(i, vTrainingSamples[i] .iSampleValue, vTrainingSamples[i] .pixels);
+    pMainWindow ->drawSample(true, i, vTrainingSamples[i] .iSampleValue, vTrainingSamples[i] .pixels);
+}
+
+void NeuralNetwork::showTestingSample(size_t i)
+{
+    pMainWindow ->drawSample(false, i, vTestingSamples[i] .iSampleValue, vTestingSamples[i] .pixels);
 }
 
 void NeuralNetwork::setBiasForAll(float fBias)
@@ -158,7 +164,7 @@ void NeuralNetwork::loadTrainingSamples()
             }
         }
 
-        vTrainingSamples .push_back(TrainingSample(pixels));
+        vTrainingSamples .push_back(ImageSample(pixels));
     }
 
 
@@ -196,6 +202,91 @@ void NeuralNetwork::loadTrainingSamples()
 
     file .close();
 
+}
+
+void NeuralNetwork::loadTestingSamples()
+{
+    std::ifstream file("t10k-images", std::ios::binary);
+
+
+    // magic number
+
+    int iNumber = 0;
+    file .read( reinterpret_cast<char*>(&iNumber), sizeof(iNumber) );
+
+
+    // number of images
+
+    file .read( reinterpret_cast<char*>(&iNumber), sizeof(iNumber) );
+
+
+    // number of rows
+
+    int iRows = 0;
+    file .read( reinterpret_cast<char*>(&iRows), sizeof(iRows) );
+
+
+    // number of columns
+
+    int iColumns = 0;
+    file .read( reinterpret_cast<char*>(&iColumns), sizeof(iColumns) );
+
+
+
+    for (int n = 0;   n < iNumber;   n++)
+    {
+        std::vector< std::vector<unsigned char> > pixels;
+
+        pixels .resize( iColumns );
+
+        for (int i = 0;   i < iRows;   i++)
+        {
+            for (int j = 0;   j < iColumns;   j++)
+            {
+                unsigned char byte = 0;
+                file .read( reinterpret_cast<char*>(&byte), sizeof(byte) );
+
+                pixels[j] .push_back(byte);
+            }
+        }
+
+        vTestingSamples .push_back(ImageSample(pixels));
+    }
+
+
+    file .close();
+
+
+
+
+
+
+
+    file.open("t10k-labels", std::ios::binary);
+
+
+    // magic number
+
+    iNumber = 0;
+    file .read( reinterpret_cast<char*>(&iNumber), sizeof(iNumber) );
+
+
+    // number of items
+
+    file .read( reinterpret_cast<char*>(&iNumber), sizeof(iNumber) );
+
+
+
+    for (int n = 0;   n < iNumber;   n++)
+    {
+        unsigned char byte = 0;
+        file .read(reinterpret_cast<char*>(&byte), sizeof(byte));
+
+        vTestingSamples[n].iSampleValue = byte;
+    }
+
+
+    file .close();
 }
 
 

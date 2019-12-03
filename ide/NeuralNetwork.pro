@@ -23,7 +23,7 @@ SOURCES += \
     ../src/Model/Layer/layer.cpp \
     ../src/Model/NeuralNetwork/neuralnetwork.cpp \
     ../src/Model/Neuron/neuron.cpp \
-    ../src/View/TrainImageWidget/trainimagewidget.cpp \
+    ../src/View/ImageWidget/imagewidget.cpp \
     ../src/main.cpp \
     ../src/View/MainWindow/mainwindow.cpp
 
@@ -35,11 +35,11 @@ HEADERS += \
     ../src/Model/NeuralNetwork/neuralnetwork.h \
     ../src/Model/Neuron/neuron.h \
     ../src/View/MainWindow/mainwindow.h \
-    ../src/View/TrainImageWidget/trainimagewidget.h
+    ../src/View/ImageWidget/imagewidget.h
 
 FORMS += \
     ../src/View/MainWindow/mainwindow.ui \
-    ../src/View/TrainImageWidget/trainimagewidget.ui
+    ../src/View/ImageWidget/imagewidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

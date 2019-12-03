@@ -90,29 +90,56 @@ void MainWindow::addTrainingCostValue(double dSampleNumber, double dValue)
     emit signalAddTrainingCostValue(dSampleNumber, dValue);
 }
 
-void MainWindow::drawSample(size_t iSampleNumber, unsigned char iSampleValue, std::vector<std::vector<unsigned char> > pixels)
+void MainWindow::drawSample(bool bTrainingSample, size_t iSampleNumber, unsigned char iSampleValue, std::vector<std::vector<unsigned char> > pixels)
 {
-    ui ->label_training_sample_number ->setText( "Training sample (" + QString::number(iSampleValue) + ") #" );
-    ui ->lineEdit_train_number ->setText( QString::number(iSampleNumber + 1) );
+    if (bTrainingSample)
+    {
+        ui ->label_training_sample_number ->setText( "Training sample (" + QString::number(iSampleValue) + ") #" );
+        ui ->lineEdit_train_number ->setText( QString::number(iSampleNumber + 1) );
 
-    if (iSampleNumber == 0)
-    {
-        ui ->pushButton_left ->setEnabled(false);
-        ui ->pushButton_right ->setEnabled(true);
-    }
-    else if (iSampleNumber == 59999)
-    {
-        ui ->pushButton_left ->setEnabled(true);
-        ui ->pushButton_right ->setEnabled(false);
+        if (iSampleNumber == 0)
+        {
+            ui ->pushButton_left ->setEnabled(false);
+            ui ->pushButton_right ->setEnabled(true);
+        }
+        else if (iSampleNumber == 59999)
+        {
+            ui ->pushButton_left ->setEnabled(true);
+            ui ->pushButton_right ->setEnabled(false);
+        }
+        else
+        {
+            ui ->pushButton_left ->setEnabled(true);
+            ui ->pushButton_right ->setEnabled(true);
+        }
+
+
+        ui ->widget_train_image ->drawSample(pixels);
     }
     else
     {
-        ui ->pushButton_left ->setEnabled(true);
-        ui ->pushButton_right ->setEnabled(true);
+        ui ->label_testing_sample_number ->setText( "Testing sample (" + QString::number(iSampleValue) + ") #" );
+        ui ->lineEdit_testing ->setText( QString::number(iSampleNumber + 1) );
+
+        if (iSampleNumber == 0)
+        {
+            ui ->pushButton_test_left ->setEnabled(false);
+            ui ->pushButton_test_right ->setEnabled(true);
+        }
+        else if (iSampleNumber == 9999)
+        {
+            ui ->pushButton_test_left ->setEnabled(true);
+            ui ->pushButton_test_right ->setEnabled(false);
+        }
+        else
+        {
+            ui ->pushButton_test_left ->setEnabled(true);
+            ui ->pushButton_test_right ->setEnabled(true);
+        }
+
+
+        ui ->widget_test ->drawSample(pixels);
     }
-
-
-    ui ->widget_train_image ->drawSample(pixels);
 }
 
 void MainWindow::slotAddTrainingCostValue(double dSampleNumber, double dValue)
@@ -147,6 +174,10 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     if (index == 0)
     {
         pNetworkController ->showTrainingSample(0);
+    }
+    else if (index == 2)
+    {
+        pNetworkController ->showTestingSample(0);
     }
 }
 
@@ -205,3 +236,50 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+void MainWindow::on_pushButton_test_left_clicked()
+{
+    bool bOk = false;
+
+    int index = ui ->lineEdit_testing ->text() .toInt(&bOk);
+
+    if (bOk)
+    {
+        index -= 2;
+        pNetworkController ->showTestingSample(index);
+    }
+}
+
+void MainWindow::on_pushButton_test_right_clicked()
+{
+    bool bOk = false;
+
+    int index = ui ->lineEdit_testing ->text() .toInt(&bOk);
+
+    if (bOk)
+    {
+        pNetworkController ->showTestingSample(index);
+    }
+}
+
+void MainWindow::on_lineEdit_testing_returnPressed()
+{
+    bool bOk = false;
+
+    int index = ui ->lineEdit_testing ->text() .toInt(&bOk);
+
+    if (bOk)
+    {
+        if (index > 10000)
+        {
+            index = 10000;
+        }
+        else if (index < 1)
+        {
+            index = 1;
+        }
+
+        index--;
+        pNetworkController ->showTestingSample(index);
+    }
+}

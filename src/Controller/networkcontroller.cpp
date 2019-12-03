@@ -37,6 +37,11 @@ void NetworkController::showTrainingSample(size_t i)
     pNeuralNetwork ->showTrainingSample(i);
 }
 
+void NetworkController::showTestingSample(size_t i)
+{
+    pNeuralNetwork ->showTestingSample(i);
+}
+
 NetworkController::~NetworkController()
 {
     if (pNeuralNetwork)

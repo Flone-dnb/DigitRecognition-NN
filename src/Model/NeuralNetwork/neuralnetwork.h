@@ -10,12 +10,12 @@ class MainWindow;
 class Layer;
 
 
-class TrainingSample
+class ImageSample
 {
 public:
 
 
-    TrainingSample( std::vector< std::vector<unsigned char> > pixels )
+    ImageSample( std::vector< std::vector<unsigned char> > pixels )
     {
         this ->pixels = pixels;
     }
@@ -48,6 +48,7 @@ public:
     // Samples
 
         void showTrainingSample (size_t i);
+        void showTestingSample  (size_t i);
 
 
     ~NeuralNetwork ();
@@ -55,6 +56,7 @@ public:
 private:
 
     void loadTrainingSamples();
+    void loadTestingSamples ();
 
 
 
@@ -65,7 +67,8 @@ private:
     std::vector<Layer*> vLayers;
 
 
-    std::vector<TrainingSample> vTrainingSamples;
+    std::vector<ImageSample> vTrainingSamples;
+    std::vector<ImageSample> vTestingSamples;
 
 
     float               fTrainingSpeed;

@@ -29,7 +29,7 @@ public:
 
 
     void addTrainingCostValue       (double dSampleNumber, double dValue);
-    void drawSample                 (size_t iSampleNumber, unsigned char iSampleValue, std::vector< std::vector<unsigned char> > pixels);
+    void drawSample                 (bool bTrainingSample, size_t iSampleNumber, unsigned char iSampleValue, std::vector< std::vector<unsigned char> > pixels);
 
 
     ~MainWindow();
@@ -53,6 +53,12 @@ private slots:
     void on_pushButton_right_clicked();
 
     void on_lineEdit_train_number_returnPressed();
+
+    void on_pushButton_test_left_clicked();
+
+    void on_pushButton_test_right_clicked();
+
+    void on_lineEdit_testing_returnPressed();
 
 private:
 

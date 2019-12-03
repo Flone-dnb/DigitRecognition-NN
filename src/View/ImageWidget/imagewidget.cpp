@@ -1,4 +1,4 @@
-﻿#include "trainimagewidget.h"
+﻿#include "imagewidget.h"
 #include "ui_trainimagewidget.h"
 
 #include <QPainter>

@@ -30,6 +30,7 @@ public:
     // Samples
 
         void showTrainingSample (size_t i);
+        void showTestingSample  (size_t i);
 
 
     ~NetworkController ();
