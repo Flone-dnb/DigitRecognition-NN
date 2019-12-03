@@ -3,6 +3,7 @@
 
 // STL
 #include <mutex>
+#include <string>
 
 // Qt
 #include <QMainWindow>
@@ -29,6 +30,8 @@ public:
 
 
     void addTrainingCostValue       (double dSampleNumber, double dValue);
+    void addTestingResult           (double dSampleNumber, double dPercent);
+    void showMessageBox             (bool bErrorBox,       std::string sText);
     void drawSample                 (bool bTrainingSample, size_t iSampleNumber, unsigned char iSampleValue, std::vector< std::vector<unsigned char> > pixels);
 
 
@@ -38,11 +41,14 @@ public:
 signals:
 
     void signalAddTrainingCostValue (double dSampleNumber, double dValue);
+    void signalAddTestingResult     (double dSampleNumber, double dPercent);
 
 
 private slots:
 
     void slotAddTrainingCostValue   (double dSampleNumber, double dValue);
+    void slotAddTestingResult       (double dSampleNumber, double dPercent);
+
 
     void on_pushButton_train_clicked();
 
@@ -59,6 +65,8 @@ private slots:
     void on_pushButton_test_right_clicked();
 
     void on_lineEdit_testing_returnPressed();
+
+    void on_pushButton_2_clicked();
 
 private:
 

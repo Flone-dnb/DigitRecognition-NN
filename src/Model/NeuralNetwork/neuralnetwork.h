@@ -51,6 +51,12 @@ public:
         void showTestingSample  (size_t i);
 
 
+    // Work
+
+        void startTraining      ();
+        void startTesting       ();
+
+
     ~NeuralNetwork ();
 
 private:

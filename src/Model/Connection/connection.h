@@ -20,9 +20,6 @@ public:
         void setupStartWeight(float fWeight);
 
 
-
-private:
-
     Neuron* pInNeuron;
     Neuron* pOutNeuron;
 

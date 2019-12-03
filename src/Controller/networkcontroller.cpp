@@ -1,6 +1,9 @@
 ﻿#include "networkcontroller.h"
 
 
+// STL
+#include <thread>
+
 // Custom
 #include "../src/Model/NeuralNetwork/neuralnetwork.h"
 
@@ -40,6 +43,20 @@ void NetworkController::showTrainingSample(size_t i)
 void NetworkController::showTestingSample(size_t i)
 {
     pNeuralNetwork ->showTestingSample(i);
+}
+
+void NetworkController::startTraining()
+{
+    std::thread tStart(&NeuralNetwork::startTraining, pNeuralNetwork);
+    tStart .detach();
+
+    //pNeuralNetwork ->startTraining();
+}
+
+void NetworkController::startTesting()
+{
+    std::thread tStart(&NeuralNetwork::startTesting, pNeuralNetwork);
+    tStart .detach();
 }
 
 NetworkController::~NetworkController()

@@ -581,7 +581,7 @@ QPushButton:hover
          </widget>
         </item>
         <item>
-         <widget class="QCustomPlot" name="widget_autotrain_graph" native="true"/>
+         <widget class="QCustomPlot" name="widget_autotest_graph" native="true"/>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout" stretch="30,40,30">

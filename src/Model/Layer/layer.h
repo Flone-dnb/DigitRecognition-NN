@@ -26,10 +26,18 @@ public:
         void connectToPrevLayer (Layer* pLayer);
 
 
+    // Work
+
+        void setInputForNeurons (std::vector<float> vInput);
+        void calculateResult    ();
+        void calculateError     ();
+        void recalculateInputWeights (float fTrainingSpeed);
+        void recalculateWeights (float fTrainingSpeed);
+
 
     // SET functions.
 
-        void setBiasToAll        (float fBias);
+        void setBiasToAll       (float fBias);
 
 
     // GET functions.

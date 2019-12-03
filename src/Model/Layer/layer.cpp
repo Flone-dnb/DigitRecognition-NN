@@ -47,6 +47,46 @@ void Layer::connectToPrevLayer(Layer *pLayer)
     }
 }
 
+void Layer::setInputForNeurons(std::vector<float> vInput)
+{
+    for (size_t i = 0;   i < vNeurons .size();   i++)
+    {
+        vNeurons[i] ->setInputValue( vInput[i] );
+    }
+}
+
+void Layer::calculateResult()
+{
+    for (size_t i = 0;   i < vNeurons .size();   i++)
+    {
+        vNeurons[i] ->calculateResult();
+    }
+}
+
+void Layer::calculateError()
+{
+    for (size_t i = 0;   i < vNeurons .size();   i++)
+    {
+        vNeurons[i] ->calculateError();
+    }
+}
+
+void Layer::recalculateInputWeights(float fTrainingSpeed)
+{
+    for (size_t i = 0;   i < vNeurons .size();   i++)
+    {
+        vNeurons[i] ->recalculateInputWeights(fTrainingSpeed);
+    }
+}
+
+void Layer::recalculateWeights(float fTrainingSpeed)
+{
+    for (size_t i = 0;   i < vNeurons .size();   i++)
+    {
+        vNeurons[i] ->recalculateWeights(fTrainingSpeed);
+    }
+}
+
 void Layer::setBiasToAll(float fBias)
 {
     for (size_t i = 0;   i < vNeurons .size();   i++)

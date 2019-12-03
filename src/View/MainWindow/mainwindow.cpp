@@ -5,6 +5,9 @@
 // STL
 #include <vector>
 
+// Qt
+#include <QMessageBox>
+
 // Custom
 #include "../src/Controller/networkcontroller.h"
 
@@ -24,10 +27,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Setup network architecture.
 
-    std::vector<unsigned int> vArchitecture = {26 * 26, 16, 16, 10};
+    //                                        "28 * 28" - input layer | "10" - output layer
+    std::vector<unsigned int> vArchitecture = {28 * 28, 16, 16, 10};
     pNetworkController ->setupNeuralNetwork(vArchitecture);
 
-    pNetworkController ->setupBias(5000);
+    pNetworkController ->setupBias(0.0f);
     pNetworkController ->setTrainingSpeed(0.5f);
 
 
@@ -35,14 +39,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Connects 'this-to-this'
     connect(this, &MainWindow::signalAddTrainingCostValue, this, &MainWindow::slotAddTrainingCostValue);
+    connect(this, &MainWindow::signalAddTestingResult,     this, &MainWindow::slotAddTestingResult);
 
 
 
 
     // Graph 1
     ui->widget_error_graph->addGraph();
-    ui->widget_error_graph->xAxis->setRange(1, 11);
-    ui->widget_error_graph->yAxis->setRange(0.0, 10.0);
 
     QPen pen;
     pen.setWidth(1);
@@ -52,7 +55,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // color and stuff
     ui->widget_error_graph->setBackground(QColor(24, 24, 24));
     ui->widget_error_graph->graph(0)->setLineStyle(QCPGraph::LineStyle::lsLine);
-    ui->widget_error_graph->axisRect()->setMargins(QMargins(255, 255, 255, 255));
     ui->widget_error_graph->xAxis->setBasePen(QColor(Qt::white));
     ui->widget_error_graph->yAxis->setBasePen(QColor(Qt::white));
     ui->widget_error_graph->xAxis->setTickLabelColor(QColor(Qt::white));
@@ -65,29 +67,46 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
     // Graph 2
-    ui->widget_autotrain_graph->addGraph();
-    ui->widget_autotrain_graph->xAxis->setRange(1, 11);
-    ui->widget_autotrain_graph->yAxis->setRange(0.0, 10.0);
+    ui->widget_autotest_graph->addGraph();
+    ui->widget_autotest_graph->xAxis->setRange(1, 11);
+    ui->widget_autotest_graph->yAxis->setRange(0.0, 100.0);
 
-    ui->widget_autotrain_graph->graph(0)->setPen(pen);
+    ui->widget_autotest_graph->graph(0)->setPen(pen);
 
     // color and stuff
-    ui->widget_autotrain_graph->setBackground(QColor(24, 24, 24));
-    ui->widget_autotrain_graph->graph(0)->setLineStyle(QCPGraph::LineStyle::lsLine);
-    ui->widget_autotrain_graph->axisRect()->setMargins(QMargins(255, 255, 255, 255));
-    ui->widget_autotrain_graph->xAxis->setBasePen(QColor(Qt::white));
-    ui->widget_autotrain_graph->yAxis->setBasePen(QColor(Qt::white));
-    ui->widget_autotrain_graph->xAxis->setTickLabelColor(QColor(Qt::white));
-    ui->widget_autotrain_graph->yAxis->setTickLabelColor(QColor(Qt::white));
-    ui->widget_autotrain_graph->xAxis->setLabel("Testing sample #");
-    ui->widget_autotrain_graph->yAxis->setLabel("Number of right answers");
-    ui->widget_autotrain_graph->xAxis->setLabelColor(QColor(Qt::white));
-    ui->widget_autotrain_graph->yAxis->setLabelColor(QColor(Qt::white));
+    ui->widget_autotest_graph->setBackground(QColor(24, 24, 24));
+    ui->widget_autotest_graph->graph(0)->setLineStyle(QCPGraph::LineStyle::lsLine);
+    ui->widget_autotest_graph->axisRect()->setMargins(QMargins(255, 255, 255, 255));
+    ui->widget_autotest_graph->xAxis->setBasePen(QColor(Qt::white));
+    ui->widget_autotest_graph->yAxis->setBasePen(QColor(Qt::white));
+    ui->widget_autotest_graph->xAxis->setTickLabelColor(QColor(Qt::white));
+    ui->widget_autotest_graph->yAxis->setTickLabelColor(QColor(Qt::white));
+    ui->widget_autotest_graph->xAxis->setLabel("Testing sample #");
+    ui->widget_autotest_graph->yAxis->setLabel("Percent of right answers");
+    ui->widget_autotest_graph->xAxis->setLabelColor(QColor(Qt::white));
+    ui->widget_autotest_graph->yAxis->setLabelColor(QColor(Qt::white));
 }
 
 void MainWindow::addTrainingCostValue(double dSampleNumber, double dValue)
 {
     emit signalAddTrainingCostValue(dSampleNumber, dValue);
+}
+
+void MainWindow::addTestingResult(double dSampleNumber, double dPercent)
+{
+    emit signalAddTestingResult(dSampleNumber, dPercent);
+}
+
+void MainWindow::showMessageBox(bool bErrorBox, std::string sText)
+{
+    if (bErrorBox)
+    {
+        QMessageBox::warning(nullptr, "Warning", QString::fromStdString(sText));
+    }
+    else
+    {
+        QMessageBox::information(nullptr, "Information", QString::fromStdString(sText));
+    }
 }
 
 void MainWindow::drawSample(bool bTrainingSample, size_t iSampleNumber, unsigned char iSampleValue, std::vector<std::vector<unsigned char> > pixels)
@@ -147,8 +166,24 @@ void MainWindow::slotAddTrainingCostValue(double dSampleNumber, double dValue)
     mtxUpdateTrainingGraph .lock();
 
 
-    QVector<double> x = {dSampleNumber};
-    QVector<double> y = {dValue};
+    QVector<double> x;
+    x .push_back(dSampleNumber);
+
+    QVector<double> y;
+    y .push_back(dValue);
+
+
+    ui->widget_error_graph->xAxis->setRange(1, dSampleNumber + 10.0);
+    ui->widget_error_graph->yAxis->setRange(0.0, 20.0);
+
+    if (dValue > 10)
+    {
+        ui->widget_error_graph->yAxis->setRange(0.0, 20.0 + (dValue - 10));
+    }
+    else
+    {
+        ui->widget_error_graph->yAxis->setRange(0.0, 20.0);
+    }
 
     ui->widget_error_graph->graph(0)->addData(x, y);
 
@@ -158,14 +193,34 @@ void MainWindow::slotAddTrainingCostValue(double dSampleNumber, double dValue)
     mtxUpdateTrainingGraph .unlock();
 }
 
-
-void MainWindow::on_pushButton_train_clicked()
+void MainWindow::slotAddTestingResult(double dSampleNumber, double dPercent)
 {
     mtxUpdateTrainingGraph .lock();
 
-    ui->widget_error_graph->clearGraphs();
+
+    QVector<double> x;
+    x .push_back(dSampleNumber);
+
+    QVector<double> y;
+    y .push_back(dPercent);
+
+
+    ui->widget_autotest_graph->xAxis->setRange(1, dSampleNumber + 10.0);
+
+    ui->widget_autotest_graph->graph(0)->addData(x, y);
+
+    ui->widget_autotest_graph->replot();
+
 
     mtxUpdateTrainingGraph .unlock();
+}
+
+
+void MainWindow::on_pushButton_train_clicked()
+{
+    ui->widget_error_graph->graph(0)->data()->clear();
+
+    pNetworkController ->startTraining();
 }
 
 
@@ -282,4 +337,9 @@ void MainWindow::on_lineEdit_testing_returnPressed()
         index--;
         pNetworkController ->showTestingSample(index);
     }
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    pNetworkController ->startTesting();
 }
