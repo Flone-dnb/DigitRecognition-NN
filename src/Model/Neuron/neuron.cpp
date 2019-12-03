@@ -56,23 +56,15 @@ void Neuron::calculateError()
     }
 }
 
-void Neuron::recalculateInputWeights(float fTrainingSpeed)
-{
-    for (size_t i = 0;   i < vOutConnections .size();   i++)
-    {
-        vOutConnections[i] ->fWeight +=
-        ( vOutConnections[i] ->pOutNeuron ->getError() * derivativeActivationFunction( vOutConnections[i] ->pOutNeuron ->getPotential() )
-          * fPotential * fTrainingSpeed );
-    }
-}
-
 void Neuron::recalculateWeights(float fTrainingSpeed)
 {
-    for (size_t i = 0;   i < vOutConnections .size();   i++)
+    for (size_t i = 0;   i < vInConnections .size();   i++)
     {
-        vOutConnections[i] ->fWeight +=
-        ( vOutConnections[i] ->pOutNeuron ->getError() * derivativeActivationFunction( vOutConnections[i] ->pOutNeuron ->getPotential() )
-          * fOutputSignal * fTrainingSpeed );
+        float fDerivative = derivativeActivationFunction( fPotential );
+
+        float fDelta = fError * fDerivative * vInConnections[i] ->pInNeuron ->getOutputSignal() * fTrainingSpeed;
+
+        vInConnections[i] ->fWeight += fDelta;
     }
 }
 
@@ -115,6 +107,11 @@ const float &Neuron::getError() const
 const float &Neuron::getPotential() const
 {
     return fPotential;
+}
+
+const float &Neuron::getBias() const
+{
+    return fBias;
 }
 
 float Neuron::activationFunc(float fInput)

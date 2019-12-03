@@ -29,7 +29,6 @@ public:
 
         void calculateResult  ();
         void calculateError   ();
-        void recalculateInputWeights (float fTrainingSpeed);
         void recalculateWeights(float fTrainingSpeed);
 
 
@@ -47,6 +46,7 @@ public:
         const float& getOutputSignal() const;
         const float& getError       () const;
         const float& getPotential   () const;
+        const float& getBias        () const;
 
 
 

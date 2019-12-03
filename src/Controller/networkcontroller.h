@@ -39,6 +39,12 @@ public:
         void startTesting       ();
 
 
+    // Save/Load
+
+        void saveTraining       (std::wstring sPath);
+        void openTraining       (std::wstring sPath);
+
+
     ~NetworkController ();
 
 private:

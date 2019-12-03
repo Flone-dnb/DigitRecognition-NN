@@ -31,7 +31,6 @@ public:
         void setInputForNeurons (std::vector<float> vInput);
         void calculateResult    ();
         void calculateError     ();
-        void recalculateInputWeights (float fTrainingSpeed);
         void recalculateWeights (float fTrainingSpeed);
 
 

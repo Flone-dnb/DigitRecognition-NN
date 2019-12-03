@@ -71,14 +71,6 @@ void Layer::calculateError()
     }
 }
 
-void Layer::recalculateInputWeights(float fTrainingSpeed)
-{
-    for (size_t i = 0;   i < vNeurons .size();   i++)
-    {
-        vNeurons[i] ->recalculateInputWeights(fTrainingSpeed);
-    }
-}
-
 void Layer::recalculateWeights(float fTrainingSpeed)
 {
     for (size_t i = 0;   i < vNeurons .size();   i++)

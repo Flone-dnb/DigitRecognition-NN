@@ -7,6 +7,7 @@
 
 // Qt
 #include <QMessageBox>
+#include <QFileDialog>
 
 // Custom
 #include "../src/Controller/networkcontroller.h"
@@ -23,16 +24,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     pNetworkController = new NetworkController(this);
 
 
-
-
-    // Setup network architecture.
-
-    //                                        "28 * 28" - input layer | "10" - output layer
-    std::vector<unsigned int> vArchitecture = {28 * 28, 16, 16, 10};
-    pNetworkController ->setupNeuralNetwork(vArchitecture);
-
-    pNetworkController ->setupBias(0.0f);
-    pNetworkController ->setTrainingSpeed(0.5f);
 
 
 
@@ -174,15 +165,14 @@ void MainWindow::slotAddTrainingCostValue(double dSampleNumber, double dValue)
 
 
     ui->widget_error_graph->xAxis->setRange(1, dSampleNumber + 10.0);
-    ui->widget_error_graph->yAxis->setRange(0.0, 20.0);
 
-    if (dValue > 10)
+    double dCurrentHeight = 100.0;
+
+    ui->widget_error_graph->yAxis->setRange(0.0, dCurrentHeight);
+
+    if ( dValue > dCurrentHeight )
     {
-        ui->widget_error_graph->yAxis->setRange(0.0, 20.0 + (dValue - 10));
-    }
-    else
-    {
-        ui->widget_error_graph->yAxis->setRange(0.0, 20.0);
+        dCurrentHeight += 100.0;
     }
 
     ui->widget_error_graph->graph(0)->addData(x, y);
@@ -210,6 +200,9 @@ void MainWindow::slotAddTestingResult(double dSampleNumber, double dPercent)
     ui->widget_autotest_graph->graph(0)->addData(x, y);
 
     ui->widget_autotest_graph->replot();
+
+
+    ui ->label_percent ->setText( QString::number(dPercent) + "%" );
 
 
     mtxUpdateTrainingGraph .unlock();
@@ -342,4 +335,40 @@ void MainWindow::on_lineEdit_testing_returnPressed()
 void MainWindow::on_pushButton_2_clicked()
 {
     pNetworkController ->startTesting();
+}
+
+void MainWindow::on_actionSave_training_triggered()
+{
+    QString sPath = QFileDialog::getSaveFileName(nullptr, "Save training", "", "(*.nnt)");
+
+    if ( sPath != "" )
+    {
+        pNetworkController ->saveTraining(sPath .toStdWString());
+    }
+}
+
+void MainWindow::on_actionCreate_new_model_triggered()
+{
+    // Setup network architecture.
+
+    //                                        "28 * 28" - input layer | "10" - output layer
+    std::vector<unsigned int> vArchitecture = {28 * 28, 16, 16, 10};
+    pNetworkController ->setupNeuralNetwork(vArchitecture);
+
+    pNetworkController ->setupBias(0.0f);
+    pNetworkController ->setTrainingSpeed(0.5f);
+
+    ui ->pushButton_train ->setEnabled(true);
+}
+
+void MainWindow::on_actionOpen_training_triggered()
+{
+    QString sPath = QFileDialog::getOpenFileName(nullptr, "Open training", "", "(*.nnt)");
+
+    if ( sPath != "" )
+    {
+        pNetworkController ->openTraining(sPath .toStdWString());
+    }
+
+    ui ->pushButton_train ->setEnabled(true);
 }

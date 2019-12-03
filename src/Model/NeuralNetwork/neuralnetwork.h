@@ -35,11 +35,13 @@ class NeuralNetwork
 public:
 
     NeuralNetwork  (const std::vector<unsigned int>& vArchitecture, MainWindow* pMainWindow);
+    NeuralNetwork  (MainWindow* pMainWindow);
 
 
 
     // Setup
 
+        void setArchitecture    (const std::vector<unsigned int>& vArchitecture);
         void setBiasForAll      (float fBias);
         void setTrainingSpeed   (float fSpeed);
         void setRandomWeights   ();
@@ -55,6 +57,12 @@ public:
 
         void startTraining      ();
         void startTesting       ();
+
+
+    // Save/Load
+
+        void saveTraining       (std::wstring sPath);
+        void openTraining       (std::wstring sPath);
 
 
     ~NeuralNetwork ();

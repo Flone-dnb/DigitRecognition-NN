@@ -15,12 +15,12 @@
 NetworkController::NetworkController(MainWindow* pMainWindow)
 {
     this ->pMainWindow    = pMainWindow;
-    this ->pNeuralNetwork = nullptr;
+    this ->pNeuralNetwork = new NeuralNetwork(pMainWindow);
 }
 
 void NetworkController::setupNeuralNetwork(const std::vector<unsigned int> &vArchitecture)
 {
-    pNeuralNetwork = new NeuralNetwork(vArchitecture, pMainWindow);
+    pNeuralNetwork ->setArchitecture(vArchitecture);
 
     pNeuralNetwork ->setRandomWeights();
 }
@@ -57,6 +57,16 @@ void NetworkController::startTesting()
 {
     std::thread tStart(&NeuralNetwork::startTesting, pNeuralNetwork);
     tStart .detach();
+}
+
+void NetworkController::saveTraining(std::wstring sPath)
+{
+    pNeuralNetwork ->saveTraining(sPath);
+}
+
+void NetworkController::openTraining(std::wstring sPath)
+{
+    pNeuralNetwork ->openTraining(sPath);
 }
 
 NetworkController::~NetworkController()

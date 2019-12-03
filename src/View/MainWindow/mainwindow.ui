@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>667</width>
-    <height>583</height>
+    <width>715</width>
+    <height>670</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -293,6 +293,9 @@ QPushButton:hover
           </item>
           <item>
            <widget class="QPushButton" name="pushButton_train">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -556,7 +559,7 @@ QPushButton:hover
        <attribute name="title">
         <string>Auto-testing</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="10,80,10">
+       <layout class="QVBoxLayout" name="verticalLayout_4" stretch="10,5,75,10">
         <item>
          <widget class="QLabel" name="label">
           <property name="font">
@@ -574,6 +577,28 @@ QPushButton:hover
           </property>
           <property name="text">
            <string>Number of testing samples: 10000</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_percent">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel
+{
+	background-color: transparent;
+	color: white;
+}</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -677,11 +702,85 @@ QPushButton:hover
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>667</width>
-     <height>30</height>
+     <width>715</width>
+     <height>33</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QMenuBar
+{
+	background-color: rgba(255, 255, 255, 0);
+	color: white;
+}
+
+QMenuBar::item:selected
+{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(81, 0, 0, 255), stop:1 rgba(131, 19, 19, 255));
+}</string>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QMenu
+{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(21, 0, 0, 255), stop:1 rgba(31, 19, 19, 255));
+}
+
+QMenu::item
+{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(21, 0, 0, 255), stop:1 rgba(31, 19, 19, 255));
+	color: white;
+}
+
+
+QMenu::item:selected
+{
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(81, 0, 0, 255), stop:1 rgba(131, 19, 19, 255));
+	color: white;
+}
+
+
+QMenu::separator
+{
+	background-color: rgb(50, 0, 0);
+	height: 2px;
+    margin-left: 10px; 
+    margin-right: 5px;
+}</string>
+    </property>
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionCreate_new_model"/>
+    <addaction name="actionSave_training"/>
+    <addaction name="actionOpen_training"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
+  <action name="actionSave_training">
+   <property name="text">
+    <string>Save training</string>
+   </property>
+  </action>
+  <action name="actionOpen_training">
+   <property name="text">
+    <string>Open training</string>
+   </property>
+  </action>
+  <action name="actionCreate_new_model">
+   <property name="text">
+    <string>Create new model</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

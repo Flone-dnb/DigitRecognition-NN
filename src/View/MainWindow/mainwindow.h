@@ -68,6 +68,12 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_actionSave_training_triggered();
+
+    void on_actionCreate_new_model_triggered();
+
+    void on_actionOpen_training_triggered();
+
 private:
 
     Ui::MainWindow*    ui;

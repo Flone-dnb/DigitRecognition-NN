@@ -27,9 +27,23 @@ NeuralNetwork::NeuralNetwork(const std::vector<unsigned int>& vArchitecture, Mai
     loadTrainingSamples();
     loadTestingSamples();
 
+    setArchitecture(vArchitecture);
+}
 
+NeuralNetwork::NeuralNetwork(MainWindow* pMainWindow)
+{
+    this ->pMainWindow = pMainWindow;
 
+    pRndGen            = new std::mt19937_64( std::random_device{}() );
 
+    fTrainingSpeed     = 0.5f;
+
+    loadTrainingSamples();
+    loadTestingSamples();
+}
+
+void NeuralNetwork::setArchitecture(const std::vector<unsigned int> &vArchitecture)
+{
     // Setup layers.
 
     for (size_t i = 0;   i < vArchitecture .size();   i++)
@@ -96,8 +110,7 @@ void NeuralNetwork::showTestingSample(size_t i)
 
 void NeuralNetwork::startTraining()
 {
-    size_t iCountRightAnswersInARow = 0;
-
+    size_t iRightAnswersInARow = 0;
 
     for (size_t i = 0;   i < vTrainingSamples .size();   i++)
     {
@@ -155,13 +168,9 @@ void NeuralNetwork::startTraining()
             vLayers[k] ->calculateError();
         }
 
-        // Recalculate the weights on the input.
+        // Recalculate the weights.
 
-        vLayers[0] ->recalculateInputWeights(fTrainingSpeed);
-
-        // And on all other layers.
-
-        for (size_t k = 1;   k < vLayers .size() - 1;   k++)
+        for (size_t k = 1;   k < vLayers .size();   k++)
         {
             vLayers[k] ->recalculateWeights(fTrainingSpeed);
         }
@@ -191,14 +200,14 @@ void NeuralNetwork::startTraining()
 
         if ( iBiggestOutputIndex == vTrainingSamples[i] .iSampleValue )
         {
-            iCountRightAnswersInARow++;
+            iRightAnswersInARow++;
         }
         else
         {
-            iCountRightAnswersInARow = 0;
+            iRightAnswersInARow = 0;
         }
 
-        pMainWindow ->addTrainingCostValue( static_cast<double> (i + 1), static_cast <double> (iCountRightAnswersInARow) );
+        pMainWindow ->addTrainingCostValue( static_cast<double> (i + 1), static_cast <double> (iRightAnswersInARow) );
     }
 }
 
@@ -261,10 +270,147 @@ void NeuralNetwork::startTesting()
             iCountRightAnswers++;
         }
 
-        double dPercent = iCountRightAnswers / static_cast <double>(i + 1);
+        double dPercent = (iCountRightAnswers / static_cast <double>(i + 1)) * 100.0;
 
         pMainWindow ->addTestingResult( static_cast<double> (i + 1), dPercent );
     }
+}
+
+void NeuralNetwork::saveTraining(std::wstring sPath)
+{
+    std::ofstream file (sPath, std::ios::binary);
+
+
+
+
+    // Save architecture.
+
+    unsigned char cArcSize = static_cast <unsigned char> ( vLayers .size() );
+    file .write( reinterpret_cast<char*>(&cArcSize), sizeof(cArcSize) );
+
+    for (size_t i = 0;   i < vLayers .size();   i++)
+    {
+        unsigned int iNeuronCount = static_cast <unsigned int>( vLayers[i] ->getNeurons() .size() );
+
+        file .write( reinterpret_cast<char*>(&iNeuronCount), sizeof(iNeuronCount) );
+    }
+
+
+
+
+    // Save bias.
+
+    float fBias = vLayers[0] ->getNeurons()[0] ->getBias();
+
+    file .write( reinterpret_cast<char*>(&fBias), sizeof(fBias) );
+
+
+
+
+    // Save training speed.
+
+    file .write( reinterpret_cast<char*>(&fTrainingSpeed), sizeof(fTrainingSpeed) );
+
+
+
+
+    // Save weights.
+
+    for (size_t i = 0;   i < vLayers .size();   i++)
+    {
+        for (size_t j = 0;   j < vLayers[i] ->getNeurons() .size();   j++)
+        {
+            std::vector<Connection*> vInConnections  = vLayers[i] ->getNeurons()[j] ->getInConnections();
+            std::vector<Connection*> vOutConnections = vLayers[i] ->getNeurons()[j] ->getOutConnections();
+
+            for (size_t k = 0;   k < vInConnections .size();   k++)
+            {
+                file .write( reinterpret_cast<char*>(&vInConnections[k] ->fWeight), sizeof(vInConnections[k] ->fWeight) );
+            }
+
+            for (size_t k = 0;   k < vOutConnections .size();   k++)
+            {
+                file .write( reinterpret_cast<char*>(&vOutConnections[k] ->fWeight), sizeof(vOutConnections[k] ->fWeight) );
+            }
+        }
+    }
+
+
+
+    file .close();
+}
+
+void NeuralNetwork::openTraining(std::wstring sPath)
+{
+    std::ifstream file (sPath, std::ios::binary);
+
+
+    // Save architecture.
+
+    unsigned char cArcSize = 0;
+    file .read( reinterpret_cast<char*>(&cArcSize), sizeof(cArcSize) );
+
+    std::vector<unsigned int> vArchitecture;
+
+    for (size_t i = 0;   i < cArcSize;   i++)
+    {
+        unsigned int iNeuronCount = 0;
+
+        file .read( reinterpret_cast<char*>(&iNeuronCount), sizeof(iNeuronCount) );
+
+        vArchitecture .push_back(iNeuronCount);
+    }
+
+    setArchitecture(vArchitecture);
+
+
+
+
+    // Save bias.
+
+    float fBias = 0;
+
+    file .read( reinterpret_cast<char*>(&fBias), sizeof(fBias) );
+
+    setBiasForAll(fBias);
+
+
+
+
+    // Save training speed.
+
+    float fNewTrainingSpeed = 0;
+
+    file .read( reinterpret_cast<char*>(&fNewTrainingSpeed), sizeof(fNewTrainingSpeed) );
+
+    setTrainingSpeed(fNewTrainingSpeed);
+
+
+
+
+    // Save weights.
+
+    for (size_t i = 0;   i < vLayers .size();   i++)
+    {
+        for (size_t j = 0;   j < vLayers[i] ->getNeurons() .size();   j++)
+        {
+            std::vector<Connection*> vInConnections  = vLayers[i] ->getNeurons()[j] ->getInConnections();
+            std::vector<Connection*> vOutConnections = vLayers[i] ->getNeurons()[j] ->getOutConnections();
+
+            for (size_t k = 0;   k < vInConnections .size();   k++)
+            {
+                file .read( reinterpret_cast<char*>(&vInConnections[k] ->fWeight), sizeof(vInConnections[k] ->fWeight) );
+            }
+
+            for (size_t k = 0;   k < vOutConnections .size();   k++)
+            {
+                file .read( reinterpret_cast<char*>(&vOutConnections[k] ->fWeight), sizeof(vOutConnections[k] ->fWeight) );
+            }
+        }
+    }
+
+
+    file .close();
 }
 
 void NeuralNetwork::setBiasForAll(float fBias)
