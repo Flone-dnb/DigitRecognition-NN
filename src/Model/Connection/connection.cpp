@@ -14,13 +14,13 @@ Connection::Connection(Neuron* pInNeuron, Neuron* pOutNeuron)
     this ->pOutNeuron = pOutNeuron;
 
 
-    this ->fWeight    = 0.0f;
+    this ->fWeight    = 0.0;
 }
 
 
 
 
-void Connection::setupStartWeight(float fWeight)
+void Connection::setupStartWeight(double fWeight)
 {
     this ->fWeight = fWeight;
 }

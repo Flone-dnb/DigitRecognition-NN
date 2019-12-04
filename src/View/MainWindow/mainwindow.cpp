@@ -56,9 +56,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->widget_error_graph->xAxis->setTickLabelColor(QColor(Qt::white));
     ui->widget_error_graph->yAxis->setTickLabelColor(QColor(Qt::white));
     ui->widget_error_graph->xAxis->setLabel("Training sample #");
-    ui->widget_error_graph->yAxis->setLabel("Cost function value");
+    ui->widget_error_graph->yAxis->setLabel("Amount of right answers in a row");
     ui->widget_error_graph->xAxis->setLabelColor(QColor(Qt::white));
     ui->widget_error_graph->yAxis->setLabelColor(QColor(Qt::white));
+    //ui->widget_error_graph->yAxis->setRange(-0.1, 0.5);
+    yMax = 100.0;
+    ui->widget_error_graph->yAxis->setRange(0.0, yMax);
+    ui->widget_error_graph->setInteraction(QCP::Interaction::iRangeZoom);
 
 
 
@@ -85,12 +89,55 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 void MainWindow::addTrainingCostValue(double dSampleNumber, double dValue)
 {
-    emit signalAddTrainingCostValue(dSampleNumber, dValue);
+    QVector<double> x;
+    x .push_back(dSampleNumber);
+
+    QVector<double> y;
+    y .push_back(dValue);
+
+
+    ui->widget_error_graph->xAxis->setRange(1, dSampleNumber + 10.0);
+
+
+    if ( dValue > yMax )
+    {
+        yMax += 100;
+    }
+
+    ui->widget_error_graph->yAxis->setRange(0, yMax);
+
+    ui->widget_error_graph->graph(0)->addData(x, y);
+
+    ui->widget_error_graph->replot();
+
+
+    //ui->label_cost->setText("Cost: " + QString::number(dValue) + "%");
+
+
+
+    //emit signalAddTrainingCostValue(dSampleNumber, dValue);
 }
 
 void MainWindow::addTestingResult(double dSampleNumber, double dPercent)
 {
-    emit signalAddTestingResult(dSampleNumber, dPercent);
+    QVector<double> x;
+    x .push_back(dSampleNumber);
+
+    QVector<double> y;
+    y .push_back(dPercent);
+
+
+    ui->widget_autotest_graph->xAxis->setRange(1, dSampleNumber + 10.0);
+
+    ui->widget_autotest_graph->graph(0)->addData(x, y);
+
+    ui->widget_autotest_graph->replot();
+
+
+    ui ->label_percent ->setText( QString::number(dPercent) + "%" );
+
+
+    //emit signalAddTestingResult(dSampleNumber, dPercent);
 }
 
 void MainWindow::showMessageBox(bool bErrorBox, std::string sText)
@@ -162,6 +209,11 @@ void MainWindow::answer(int iAnswer)
     ui ->label_nn_answer ->setText("I think this is number " + QString::number(iAnswer) + ".");
 }
 
+void MainWindow::processEvents()
+{
+    QApplication::processEvents();
+}
+
 void MainWindow::slotAddTrainingCostValue(double dSampleNumber, double dValue)
 {
     mtxUpdateTrainingGraph .lock();
@@ -176,18 +228,12 @@ void MainWindow::slotAddTrainingCostValue(double dSampleNumber, double dValue)
 
     ui->widget_error_graph->xAxis->setRange(1, dSampleNumber + 10.0);
 
-    double dCurrentHeight = 100.0;
-
-    ui->widget_error_graph->yAxis->setRange(0.0, dCurrentHeight);
-
-    if ( dValue > dCurrentHeight )
-    {
-        dCurrentHeight += 100.0;
-    }
-
     ui->widget_error_graph->graph(0)->addData(x, y);
 
     ui->widget_error_graph->replot();
+
+
+    ui->label_cost->setText("Cost: " + QString::number(dValue) + " %");
 
 
     mtxUpdateTrainingGraph .unlock();
@@ -294,6 +340,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    pNetworkController ->stopTraining();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+}
+
 
 void MainWindow::on_pushButton_test_left_clicked()
 {
@@ -362,13 +415,14 @@ void MainWindow::on_actionCreate_new_model_triggered()
     // Setup network architecture.
 
     //                                        "28 * 28" - input layer | "10" - output layer
-    std::vector<unsigned int> vArchitecture = {28 * 28, 16, 16, 10};
+    std::vector<unsigned int> vArchitecture = {28 * 28, 256, 10};
     pNetworkController ->setupNeuralNetwork(vArchitecture);
 
     pNetworkController ->setupBias(0.0f);
     pNetworkController ->setTrainingSpeed(0.5f);
 
     ui ->pushButton_train ->setEnabled(true);
+    ui ->pushButton_4     ->setEnabled(true);
 }
 
 void MainWindow::on_actionOpen_training_triggered()
@@ -378,9 +432,10 @@ void MainWindow::on_actionOpen_training_triggered()
     if ( sPath != "" )
     {
         pNetworkController ->openTraining(sPath .toStdWString());
-    }
 
-    ui ->pushButton_train ->setEnabled(true);
+        ui ->pushButton_train ->setEnabled(true);
+        ui ->pushButton_4     ->setEnabled(true);
+    }
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -399,4 +454,11 @@ void MainWindow::on_pushButton_3_clicked()
         }
     }
 
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    pNetworkController ->stopTraining();
+
+    ui->pushButton_train->setEnabled(true);
 }

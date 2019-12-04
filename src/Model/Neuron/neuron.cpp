@@ -14,10 +14,10 @@
 
 Neuron::Neuron()
 {
-    fPotential    = 0.0f;
-    fBias         = 0.0f;
-    fOutputSignal = 0.0f;
-    fError        = 0.0f;
+    fPotential    = 0.0;
+    fBias         = 0.0;
+    fOutputSignal = 0.0;
+    fError        = 0.0;
 }
 
 
@@ -35,7 +35,7 @@ void Neuron::addOutConnection(Neuron *pNeuron)
 
 void Neuron::calculateResult()
 {
-    fPotential = 0.0f;
+    fPotential = 0.0;
 
     for (size_t i = 0;   i < vInConnections .size();   i++)
     {
@@ -48,7 +48,7 @@ void Neuron::calculateResult()
 
 void Neuron::calculateError()
 {
-    fError = 0.0f;
+    fError = 0.0;
 
     for (size_t i = 0;   i < vOutConnections .size();   i++)
     {
@@ -56,30 +56,30 @@ void Neuron::calculateError()
     }
 }
 
-void Neuron::recalculateWeights(float fTrainingSpeed)
+void Neuron::recalculateWeights(double fTrainingSpeed)
 {
     for (size_t i = 0;   i < vInConnections .size();   i++)
     {
-        float fDerivative = derivativeActivationFunction( fPotential );
+        double fDerivative = derivativeActivationFunction( fPotential );
 
-        float fDelta = fError * fDerivative * vInConnections[i] ->pInNeuron ->getOutputSignal() * fTrainingSpeed;
+        double fDelta = fError * fDerivative * vInConnections[i] ->pInNeuron ->getOutputSignal() * fTrainingSpeed;
 
         vInConnections[i] ->fWeight += fDelta;
     }
 }
 
-void Neuron::setInputValue(float fPotential)
+void Neuron::setInputValue(double fPotential)
 {
     this ->fOutputSignal = fPotential;
     this ->fPotential    = fPotential;
 }
 
-void Neuron::setBias(float fBias)
+void Neuron::setBias(double fBias)
 {
     this ->fBias = fBias;
 }
 
-void Neuron::setError(float fError)
+void Neuron::setError(double fError)
 {
     this ->fError = fError;
 }
@@ -94,32 +94,32 @@ const std::vector<Connection *> &Neuron::getOutConnections() const
     return vOutConnections;
 }
 
-const float &Neuron::getOutputSignal() const
+const double &Neuron::getOutputSignal() const
 {
     return fOutputSignal;
 }
 
-const float &Neuron::getError() const
+const double &Neuron::getError() const
 {
     return fError;
 }
 
-const float &Neuron::getPotential() const
+const double &Neuron::getPotential() const
 {
     return fPotential;
 }
 
-const float &Neuron::getBias() const
+const double &Neuron::getBias() const
 {
     return fBias;
 }
 
-float Neuron::activationFunc(float fInput)
+double Neuron::activationFunc(double fInput)
 {
     return (1 / (1 + exp(-fInput)));
 }
 
-float Neuron::derivativeActivationFunction(float fInput)
+double Neuron::derivativeActivationFunction(double fInput)
 {
     return activationFunc(fInput) * (1 - activationFunc(fInput));
 }

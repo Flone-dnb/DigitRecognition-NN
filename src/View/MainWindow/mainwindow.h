@@ -35,6 +35,8 @@ public:
     void drawSample                 (bool bTrainingSample, size_t iSampleNumber, unsigned char iSampleValue, std::vector< std::vector<unsigned char> > pixels);
     void answer                     (int iAnswer);
 
+    void processEvents              ();
+
 
     ~MainWindow();
 
@@ -44,7 +46,9 @@ signals:
     void signalAddTrainingCostValue (double dSampleNumber, double dValue);
     void signalAddTestingResult     (double dSampleNumber, double dPercent);
 
+protected:
 
+    void closeEvent(QCloseEvent* event);
 private slots:
 
     void slotAddTrainingCostValue   (double dSampleNumber, double dValue);
@@ -79,6 +83,8 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void on_pushButton_4_clicked();
+
 private:
 
     Ui::MainWindow*    ui;
@@ -86,4 +92,7 @@ private:
 
 
     std::mutex         mtxUpdateTrainingGraph;
+
+
+    double             yMax;
 };

@@ -47,16 +47,23 @@ void NetworkController::showTestingSample(size_t i)
 
 void NetworkController::startTraining()
 {
-    std::thread tStart(&NeuralNetwork::startTraining, pNeuralNetwork);
-    tStart .detach();
+    //std::thread tStart(&NeuralNetwork::startTraining, pNeuralNetwork);
+    //tStart .detach();
 
-    //pNeuralNetwork ->startTraining();
+    pNeuralNetwork ->startTraining();
+}
+
+void NetworkController::stopTraining()
+{
+    pNeuralNetwork ->stopTraining();
 }
 
 void NetworkController::startTesting()
 {
-    std::thread tStart(&NeuralNetwork::startTesting, pNeuralNetwork);
-    tStart .detach();
+    //std::thread tStart(&NeuralNetwork::startTesting, pNeuralNetwork);
+    //tStart .detach();
+
+    pNeuralNetwork ->startTesting();
 }
 
 void NetworkController::answer(std::vector< std::vector<unsigned char> > vInput)

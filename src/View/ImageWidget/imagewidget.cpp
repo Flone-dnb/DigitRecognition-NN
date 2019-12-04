@@ -78,12 +78,12 @@ void TrainImageWidget::paintEvent(QPaintEvent *event)
         {
             if (drawing[x - 1][y] != 255)
             {
-                drawing[x - 1][y] = 128;
+                drawing[x - 1][y] = 170;
             }
 
             if (drawing[x + 1][y] != 255)
             {
-                drawing[x + 1][y] = 128;
+                drawing[x + 1][y] = 170;
             }
         }
 
@@ -91,12 +91,12 @@ void TrainImageWidget::paintEvent(QPaintEvent *event)
         {
             if (drawing[x][y - 1] != 255)
             {
-                drawing[x][y - 1] = 128;
+                drawing[x][y - 1] = 170;
             }
 
             if (drawing[x][y + 1] != 255)
             {
-                drawing[x][y + 1] = 128;
+                drawing[x][y + 1] = 170;
             }
         }
 
@@ -118,15 +118,55 @@ void TrainImageWidget::paintEvent(QPaintEvent *event)
 
     if (bDrawImage)
     {
+        // Draw image
+
+
         for (size_t i = 0; i < drawing .size(); i++)
         {
             for (size_t j = 0; j < drawing[i] .size(); j++)
             {
                 myPen.setColor(QColor(drawing[i][j], drawing[i][j], drawing[i][j]));
 
+
                 painter.setPen(myPen);
                 painter.drawPoint( i, j );
             }
+        }
+
+
+        // Draw bounds
+
+        for (size_t j = 0; j < 28; j++)
+        {
+            myPen.setColor(QColor(255, 0, 0));
+
+            painter.setPen(myPen);
+            painter.drawPoint( 4, j );
+        }
+
+
+        for (size_t j = 0; j < 28; j++)
+        {
+            myPen.setColor(QColor(255, 0, 0));
+
+            painter.setPen(myPen);
+            painter.drawPoint( 24, j );
+        }
+
+        for (size_t i = 0; i < 28; i++)
+        {
+            myPen.setColor(QColor(255, 0, 0));
+
+            painter.setPen(myPen);
+            painter.drawPoint( i, 4 );
+        }
+
+        for (size_t i = 0; i < 28; i++)
+        {
+            myPen.setColor(QColor(255, 0, 0));
+
+            painter.setPen(myPen);
+            painter.drawPoint( i, 24 );
         }
     }
     else

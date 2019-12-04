@@ -29,24 +29,24 @@ public:
 
         void calculateResult  ();
         void calculateError   ();
-        void recalculateWeights(float fTrainingSpeed);
+        void recalculateWeights(double fTrainingSpeed);
 
 
     // SET functions.
 
-        void setInputValue    (float fPotential);
-        void setBias          (float fBias);
-        void setError         (float fError);
+        void setInputValue    (double fPotential);
+        void setBias          (double fBias);
+        void setError         (double fError);
 
 
     // GET functions.
 
         const std::vector<Connection*>& getInConnections () const;
         const std::vector<Connection*>& getOutConnections() const;
-        const float& getOutputSignal() const;
-        const float& getError       () const;
-        const float& getPotential   () const;
-        const float& getBias        () const;
+        const double& getOutputSignal() const;
+        const double& getError       () const;
+        const double& getPotential   () const;
+        const double& getBias        () const;
 
 
 
@@ -55,8 +55,8 @@ public:
 
 private:
 
-    float activationFunc               (float fInput);
-    float derivativeActivationFunction (float fInput);
+    double activationFunc               (double fInput);
+    double derivativeActivationFunction (double fInput);
 
 
 
@@ -64,9 +64,9 @@ private:
     std::vector<Connection*> vOutConnections;
 
 
-    float fPotential;
-    float fOutputSignal;
-    float fBias;
+    double fPotential;
+    double fOutputSignal;
+    double fBias;
 
-    float fError;
+    double fError;
 };

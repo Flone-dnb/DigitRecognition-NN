@@ -17,12 +17,12 @@ public:
 
     // SET functions.
 
-        void setupStartWeight(float fWeight);
+        void setupStartWeight(double fWeight);
 
 
     Neuron* pInNeuron;
     Neuron* pOutNeuron;
 
 
-    float   fWeight;
+    double   fWeight;
 };

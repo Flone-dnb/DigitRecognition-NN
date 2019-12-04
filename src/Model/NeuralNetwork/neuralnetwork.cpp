@@ -23,6 +23,8 @@ NeuralNetwork::NeuralNetwork(const std::vector<unsigned int>& vArchitecture, Mai
 
     fTrainingSpeed     = 0.5f;
 
+    bTraining          = false;
+
 
     loadTrainingSamples();
     loadTestingSamples();
@@ -110,111 +112,141 @@ void NeuralNetwork::showTestingSample(size_t i)
 
 void NeuralNetwork::startTraining()
 {
+    bTraining = true;
+
+    double dLowestCost = 1.0;
+
     size_t iRightAnswersInARow = 0;
 
-    for (size_t i = 0;   i < vTrainingSamples .size();   i++)
+    size_t iGlobalI = 0;
+
+    while (bTraining)
     {
-        // Convert input to a one-dimensional [0.0 ... 1.0] vector.
-
-        std::vector<float> vTrainingSample;
-
-        for (size_t row = 0;   row < vTrainingSamples[i] .pixels .size();   row++)
+        for (size_t i = 0;   (i < vTrainingSamples .size()) && (bTraining);   i++)
         {
-            for (size_t column = 0;   column < vTrainingSamples[i] .pixels[row] .size();   column++)
+            // Convert input to a one-dimensional [0.0 ... 1.0] vector.
+
+            std::vector<float> vTrainingSample;
+
+            for (size_t row = 0;   row < vTrainingSamples[i] .pixels .size();   row++)
             {
-                float fInput = vTrainingSamples[i] .pixels[row][column] / static_cast <float> (UCHAR_MAX);
+                for (size_t column = 0;   column < vTrainingSamples[i] .pixels[row] .size();   column++)
+                {
+                    float fInput = vTrainingSamples[i] .pixels[row][column] / static_cast <float> (UCHAR_MAX);
 
-                vTrainingSample .push_back( fInput );
-            }
-        }
-
-
-
-        // Give the input to the neurons.
-
-        vLayers[0] ->setInputForNeurons (vTrainingSample);
-
-        for (size_t j = 1;   j < vLayers .size();   j++)
-        {
-            vLayers[j] ->calculateResult();
-        }
-
-
-
-
-        // Get the error.
-
-        std::vector<Neuron*> vOutputNeurons = vLayers .back() ->getNeurons();
-
-        for (size_t k = 0;   k < vOutputNeurons .size();   k++)
-        {
-            float fDesired = 0.0f;
-
-            if ( k == vTrainingSamples[i] .iSampleValue )
-            {
-                fDesired = 1.0f;
+                    vTrainingSample .push_back( fInput );
+                }
             }
 
-            vOutputNeurons[k] ->setError( fTrainingSpeed * (fDesired - vOutputNeurons[k] ->getOutputSignal()) );
-        }
 
 
+            // Give the input to the neurons.
 
+            vLayers[0] ->setInputForNeurons (vTrainingSample);
 
-        // Backpropogation.
-
-        for (size_t k = vLayers .size() - 2;   k > 0;   k--)
-        {
-            vLayers[k] ->calculateError();
-        }
-
-        // Recalculate the weights.
-
-        for (size_t k = 1;   k < vLayers .size();   k++)
-        {
-            vLayers[k] ->recalculateWeights(fTrainingSpeed);
-        }
-
-
-
-
-        // Get the biggest output.
-
-        size_t iBiggestOutputIndex = 0;
-
-        for (size_t k = 1;   k < vOutputNeurons .size();   k++)
-        {
-            if ( vOutputNeurons[k] ->getOutputSignal() > vOutputNeurons[iBiggestOutputIndex] ->getOutputSignal() )
+            for (size_t j = 1;   j < vLayers .size();   j++)
             {
-                iBiggestOutputIndex = k;
+                vLayers[j] ->calculateResult();
+            }
+
+
+
+
+            // Get the error.
+
+            std::vector<Neuron*> vOutputNeurons = vLayers .back() ->getNeurons();
+
+            double dCost = 0.0;
+
+            size_t iBiggestOutput = 0;
+
+            for (size_t k = 0;   k < vOutputNeurons .size();   k++)
+            {
+                if (k != 0)
+                {
+                    if ( vOutputNeurons[k] ->getOutputSignal() > vOutputNeurons[iBiggestOutput] ->getOutputSignal() )
+                    {
+                        iBiggestOutput = k;
+                    }
+                }
+
+
+
+                float fDesired = 0.0f;
+
+                if ( k == vTrainingSamples[i] .iSampleValue )
+                {
+                    fDesired = 1.0f;
+                }
+
+                double dResult = static_cast <double> (fDesired) - static_cast<double> ( vOutputNeurons[k] ->getOutputSignal() );
+
+                dCost += pow( (dResult), 2 );
+                //dCost += abs(dResult);
+
+                vOutputNeurons[k] ->setError( fTrainingSpeed * static_cast<float> (dResult) );
+            }
+
+            if ( iBiggestOutput == vTrainingSamples[i] .iSampleValue )
+            {
+                iRightAnswersInARow++;
+            }
+            else
+            {
+                iRightAnswersInARow = 0;
+            }
+
+
+
+            // Backpropogation.
+
+            for (size_t k = vLayers .size() - 2;   k > 0;   k--)
+            {
+                vLayers[k] ->calculateError();
+            }
+
+            // Recalculate the weights.
+
+            for (size_t k = 1;   k < vLayers .size();   k++)
+            {
+                vLayers[k] ->recalculateWeights(fTrainingSpeed);
+            }
+
+
+
+            dCost /= 2;
+            //dCost /= vOutputNeurons .size();
+
+            if (dCost < dLowestCost)
+            {
+                dLowestCost = dCost;
+            }
+            else
+            {
+                dCost = dLowestCost;
+            }
+
+            iGlobalI++;
+
+            //pMainWindow ->addTrainingCostValue( static_cast<double> (iGlobalI + 1), static_cast <double> (dCost) );
+            pMainWindow ->addTrainingCostValue( static_cast<double> (iGlobalI + 1), static_cast <double> (iRightAnswersInARow) );
+
+            if ( i % 100 == 0 )
+            {
+                pMainWindow ->processEvents();
             }
         }
-
-
-
-
-        // Cost function.
-
-        double dCostValue = 10.0;
-
-
-        if ( iBiggestOutputIndex == vTrainingSamples[i] .iSampleValue )
-        {
-            iRightAnswersInARow++;
-        }
-        else
-        {
-            iRightAnswersInARow = 0;
-        }
-
-        pMainWindow ->addTrainingCostValue( static_cast<double> (i + 1), static_cast <double> (iRightAnswersInARow) );
     }
+}
+
+void NeuralNetwork::stopTraining()
+{
+    bTraining = false;
 }
 
 void NeuralNetwork::startTesting()
 {
     size_t iCountRightAnswers = 0;
-
 
     for (size_t i = 0;   i < vTestingSamples .size();   i++)
     {
@@ -273,6 +305,12 @@ void NeuralNetwork::startTesting()
         double dPercent = (iCountRightAnswers / static_cast <double>(i + 1)) * 100.0;
 
         pMainWindow ->addTestingResult( static_cast<double> (i + 1), dPercent );
+
+
+        if ( i % 100 == 0 )
+        {
+            pMainWindow ->processEvents();
+        }
     }
 }
 

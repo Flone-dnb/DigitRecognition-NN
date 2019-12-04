@@ -56,6 +56,7 @@ public:
     // Work
 
         void startTraining      ();
+        void stopTraining       ();
         void startTesting       ();
         void answer             (std::vector< std::vector<unsigned char> > vInput);
 
@@ -87,4 +88,7 @@ private:
 
 
     float               fTrainingSpeed;
+
+
+    bool                bTraining;
 };
